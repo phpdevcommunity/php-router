@@ -1,0 +1,20 @@
+{
+    "name": "FadymichelR/Php-Routing",
+    "description": "a simple routing php",
+    "type": "package",
+    "autoload": {
+        "psr-4": {
+            "Fady\\Routing\\": ""
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fady Michel",
+            "email": "fadymichel.r@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    }
+}
