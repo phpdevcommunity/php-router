@@ -4,17 +4,21 @@
     "type": "package",
     "autoload": {
         "psr-4": {
-            "Fady\\Routing\\": ""
+            "Webbym\\Routing\\": "src",
+            "Test\\Webbym\\Routing\\": "test"
         }
     },
     "license": "MIT",
     "authors": [
         {
-            "name": "Fady Michel",
-            "email": "fadymichel.r@gmail.com"
+            "name": "Fad M.R",
+            "email": "contact@webbymichel.fr"
         }
     ],
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.1"
     }
 }

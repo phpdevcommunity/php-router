@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Fady\Routing;
+namespace Webbym\Routing;
 
 /**
  * Interface RouteBuilderInterface

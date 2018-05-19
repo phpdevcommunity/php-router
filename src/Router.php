@@ -1,6 +1,6 @@
 <?php
 
-namespace Fady\Routing;
+namespace Webbym\Routing;
 
 /**
  * Class Router
@@ -36,7 +36,6 @@ class Router
 
     }
 
-
     /**
      * @param Route $route
      * @return Router
@@ -54,24 +53,21 @@ class Router
      * @return Route|mixed
      * @throws \Exception
      */
-    public function getRoute($url)
+    public function getRoute($path)
     {
         /**
          * @var Route $route
          */
         foreach ($this->routes as $route) {
 
-            $varsValues = $route->match($url);
+            $varsValues = $route->match($path);
             if (!is_null($varsValues)) {
 
                 if ($route->hasVars()) {
 
-                    $varsNames = $route->getVarsNames();
                     $listVars = [];
-                    foreach ($varsValues as $key => $match) {
-                        if ($key !== 0) {
-                            $listVars[$varsNames[$key - 1]] = $match;
-                        }
+                    foreach ($varsValues as $key => $value) {
+                            $listVars[$key] = $value;
                     }
 
                     $route->setVars($listVars);
