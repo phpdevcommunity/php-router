@@ -1,60 +1,50 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: fadymichel
+ * Date: 20/05/18
+ * Time: 01:57
+ */
 
 namespace Test\Webbym\Routing;
 
 
-
 use PHPUnit\Framework\TestCase;
 use Webbym\Routing\Route;
+use Webbym\Routing\Router;
 
 /**
  * Class RouterTest
  * @package Test\Webbym\Routing
  */
-class RouterTest extends TestCase {
+class RouterTest extends TestCase
+{
 
 
-    /**
-     * @throws \Exception
-     */
-    public function testNotFoundRoute()
-    {
-        $routeWithoutAttribute = new Route('/view/article/', 'App\\Controller\\HomeController', 'home');
-        $routeWithAttribute = new Route('/view/article/{article}', 'App\\Controller\\HomeController', 'home');
+    public function testGenerateUrl() {
 
-        $router = (new \Webbym\Routing\Router())
-            ->addRoute($routeWithoutAttribute)
-            ->addRoute($routeWithAttribute)
-        ;
+        $routeHome = new Route('home_page', '/home', 'App\\Controller\\HomeController', 'home');
+        $routeArticle = new Route('article_page', '/view/article', 'App\\Controller\\HomeController', 'article');
+        $routeArticleWithParam = new Route('article_page_by_id', '/view/article/{id}', 'App\\Controller\\HomeController', 'article');
+        $routeArticleWithParams = new Route('article_page_by_id_and_page', '/view/article/{id}/{page}', 'App\\Controller\\HomeController', 'article');
 
-        try {
-            $this->assertInstanceOf(Route::class, $router->getRoute('/view/article/1'));
-        }catch (\Exception $e) {
-            $this->assertInstanceOf(\Exception::class,$e);
-        }
+        $router = (new Router())
+            ->addRoute($routeHome)
+            ->addRoute($routeArticle)
+            ->addRoute($routeArticleWithParam)
+            ->addRoute($routeArticleWithParams);
 
-        try {
-            $this->assertInstanceOf(Route::class, $router->getRoute('/view/file/'));
-        }catch (\Exception $e) {
-            $this->assertInstanceOf(\Exception::class,$e);
-        }
+        $urlHome = $router->generateUri('home_page');
+        $urlArticle = $router->generateUri('article_page');
+        $urlArticleWithParam = $router->generateUri('article_page_by_id', ['id' => 25]);
+        $routeArticleWithParams = $router->generateUri('article_page_by_id_and_page', ['id' => 25, 'page' => 3]);
 
-    }
+        $this->assertEquals($urlHome, '/home');
+        $this->assertEquals($urlArticle, '/view/article');
+        $this->assertEquals($urlArticleWithParam, '/view/article/25');
+        $this->assertEquals($routeArticleWithParams, '/view/article/25/3');
 
-    /**
-     * @throws \Exception
-     */
-    public function testMatchRoute()
-    {
-        $routeWithoutAttribute = new Route('/view/article/', 'App\\Controller\\HomeController', 'home');
-        $routeWithAttribute = new Route('/view/article/{article}', 'App\\Controller\\HomeController', 'home');
 
-        $router = (new \Webbym\Routing\Router())
-            ->addRoute($routeWithoutAttribute)
-            ->addRoute($routeWithAttribute)
-        ;
-        $this->assertInstanceOf(Route::class, $router->getRoute('/view/article/'));
-        $this->assertInstanceOf(Route::class, $router->getRoute('/view/article/28'));
     }
 
 }

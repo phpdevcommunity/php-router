@@ -4,10 +4,15 @@ namespace Webbym\Routing;
 
 /**
  * Class Route
- * @package Fady\Routing
+ * @package Webbym\Routing
  */
 class Route
 {
+    /**
+     * @var string
+     */
+    protected $name;
+
     /**
      * @var string
      */
@@ -47,10 +52,11 @@ class Route
      * @param array $requirements
      * @param array $varsNames
      */
-    public function __construct(string $path, string $controller, string $action, array $requirements = [])
+    public function __construct(string $name, string $path, string $controller, string $action, array $requirements = [])
     {
         $this->setPath($path)
             ->setController($controller)
+            ->setName($name)
             ->setAction($action)
             ->setRequirements($requirements);
     }
@@ -61,7 +67,12 @@ class Route
      */
     public function hasVars()
     {
-        return !empty($this->varsNames);
+        if (empty($this->varsNames)) {
+
+            preg_match_all('/{[^}]*}/', $this->path, $matches);
+            $this->setVarsNames(reset($matches));
+        }
+        return !empty($this->getVarsNames());
     }
 
     /**
@@ -70,22 +81,9 @@ class Route
      */
     public function match(string $path)
     {
-        if ('/' !== substr($path, -1)) {
-            $path = $path.'/';
-        }
-        preg_match_all('/{[^}]*}/', $this->path, $matches);
-        $variables = reset($matches);
+        $path = $this->trimPath($path);
+        if (preg_match('#^'.$this->generateRegex().'$#sD', $path, $matches)) {
 
-        $regex = $this->path;
-        if (!empty($variables)) {
-            foreach ($variables as $variable) {
-                $varName = trim($variable,'{\}');
-                $regex = str_replace($variable, '(?P<'.$varName.'>[^/]++)', $regex);
-                $this->addVarName($varName);
-            }
-        }
-
-        if (preg_match('#^'.$regex.'$#sD', $path, $matches)) {
             return array_filter($matches, function ($key) {
                 return is_string($key);
             }, ARRAY_FILTER_USE_KEY);
@@ -94,15 +92,51 @@ class Route
         return null;
     }
 
+
+    /**
+     * @return string
+     */
+    private function generateRegex() {
+
+        $regex = $this->path;
+        if ($this->hasVars()) {
+
+            foreach ($this->getVarsNames() as $variable) {
+                $varName = trim($variable,'{\}');
+                $regex = str_replace($variable, '(?P<'.$varName.'>[^/]++)', $regex);
+            }
+        }
+
+        return $regex;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return Route
+     */
+    public function setName(string $name): Route
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+
     /**
      * @param string $action
      * @return Route
      */
     public function setAction(string $action)
     {
-        if (is_string($action)) {
-            $this->action = $action;
-        }
+
+        $this->action = $action;
         return $this;
     }
 
@@ -112,11 +146,20 @@ class Route
      */
     public function setController(string $controller)
     {
-        if (is_string($controller)) {
-            $this->controller = $controller;
-        }
+
+        $this->controller = $controller;
+
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
 
     /**
      * @param string $path
@@ -227,6 +270,7 @@ class Route
      */
     private function trimPath(string $path)
     {
-        return '/'.rtrim(ltrim(trim($path), '/'), '/').'/';
+
+        return '/'.rtrim(ltrim(trim($path), '/'), '/');
     }
 }

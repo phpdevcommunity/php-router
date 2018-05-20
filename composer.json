@@ -1,5 +1,5 @@
 {
-    "name": "FadymichelR/Php-Routing",
+    "name": "webbym/php-routing",
     "description": "a simple routing php",
     "type": "package",
     "autoload": {
@@ -16,7 +16,8 @@
         }
     ],
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "psr/http-message": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~7.1"

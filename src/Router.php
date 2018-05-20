@@ -1,12 +1,14 @@
 <?php
 
+
 namespace Webbym\Routing;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class Router
  * @package Fady\Routing
  */
-class Router
+class Router implements RouterInterface
 {
     const NO_ROUTE = 1;
 
@@ -40,10 +42,10 @@ class Router
      * @param Route $route
      * @return Router
      */
-    public function addRoute(Route $route)
+    public function addRoute(Route $route) : RouterInterface
     {
         if (!in_array($route, $this->routes)) {
-            $this->routes[] = $route;
+            $this->routes[$route->getName()] = $route;
         }
         return $this;
     }
@@ -53,14 +55,14 @@ class Router
      * @return Route|mixed
      * @throws \Exception
      */
-    public function getRoute($path)
+    public function match(ServerRequestInterface $serverRequest) : Route
     {
         /**
          * @var Route $route
          */
         foreach ($this->routes as $route) {
 
-            $varsValues = $route->match($path);
+            $varsValues = $route->match($serverRequest->getUri()->getPath());
             if (!is_null($varsValues)) {
 
                 if ($route->hasVars()) {
@@ -78,4 +80,51 @@ class Router
 
         throw new \Exception('Aucune route ne correspond à l\'URL', self::NO_ROUTE);
     }
+
+
+    /**
+     * @param string $name
+     * @param array $parameters
+     * @param int $referenceType
+     * @return string
+     * @throws \Exception
+     */
+    public function generateUri(string $name, array $parameters = [], $referenceType = self::ABSOLUTE_PATH): string
+    {
+        if (!array_key_exists($name , $this->routes)) {
+
+            throw new \Exception(sprintf('%s name route doesnt exist', $name));
+        }
+
+        /**
+         * @var Route $route
+         */
+        $route = $this->routes[$name];
+        $uri = $route->getPath();
+
+        if ($route->hasVars()) {
+            if (empty($parameters)) {
+                throw new \Exception(
+                    sprintf(
+                        '%s route need parameters: %s',
+                        $name,
+                        implode(',',$route->getVarsNames())
+                    )
+                );
+            }
+
+            foreach ($route->getVarsNames() as $variable) {
+                $varName = trim($variable,'{\}');
+                if (!array_key_exists($varName , $parameters)) {
+                    throw new \Exception(sprintf('%s not found in parameters to generate url', $varName));
+                }
+                $uri = str_replace($variable, $parameters[$varName], $uri);
+            }
+
+        }
+
+        return $uri;
+
+    }
+
 }
