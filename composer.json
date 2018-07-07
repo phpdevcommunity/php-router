@@ -1,18 +1,18 @@
 {
-    "name": "webbym/php-routing",
+    "name": "webby/php-routing",
     "description": "a simple routing php",
     "type": "package",
     "autoload": {
         "psr-4": {
-            "Webbym\\Routing\\": "src",
-            "Test\\Webbym\\Routing\\": "test"
+            "Webby\\Routing\\": "src",
+            "Test\\Webby\\Routing\\": "tests"
         }
     },
     "license": "MIT",
     "authors": [
         {
-            "name": "Fad M.R",
-            "email": "contact@webbymichel.fr"
+            "name": "F.Michel",
+            "email": "fadymichel.r@gmail.com"
         }
     ],
     "require": {

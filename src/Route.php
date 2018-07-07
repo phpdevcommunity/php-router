@@ -1,6 +1,6 @@
 <?php
 
-namespace Webbym\Routing;
+namespace Webby\Routing;
 
 /**
  * Class Route
@@ -96,7 +96,8 @@ class Route
     /**
      * @return string
      */
-    private function generateRegex() {
+    private function generateRegex()
+    {
 
         $regex = $this->path;
         if ($this->hasVars()) {
@@ -268,7 +269,7 @@ class Route
      * @param string $path
      * @return string
      */
-    private function trimPath(string $path)
+    private function trimPath(string $path) :string
     {
 
         return '/'.rtrim(ltrim(trim($path), '/'), '/');

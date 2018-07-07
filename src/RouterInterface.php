@@ -1,6 +1,6 @@
 <?php
 
-namespace Webbym\Routing;
+namespace Webby\Routing;
 
 use Psr\Http\Message\ServerRequestInterface;
 

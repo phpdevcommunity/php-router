@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Webbym\Routing;
+namespace Webby\Routing;
 
 /**
  * Interface RouteBuilderInterface

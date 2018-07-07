@@ -10,8 +10,8 @@ namespace Test\Webbym\Routing;
 
 
 use PHPUnit\Framework\TestCase;
-use Webbym\Routing\Route;
-use Webbym\Routing\Router;
+use Webby\Routing\Route;
+use Webby\Routing\Router;
 
 /**
  * Class RouterTest
