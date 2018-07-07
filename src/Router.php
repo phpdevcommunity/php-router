@@ -52,7 +52,7 @@ class Router implements RouterInterface
 
     /**
      * @param $url
-     * @return Route|mixed
+     * @return Route
      * @throws \Exception
      */
     public function match(ServerRequestInterface $serverRequest) : Route
