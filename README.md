@@ -29,9 +29,9 @@ $router = (new Router())
  /**
  * @var ServerRequestInterface $request
  */        
-$route = $router->match($request);
+$routeMatching = $router->match($request);
 
-$controller = $route->getController();
-$action = $route->getAction();
+$controller = $routeMatching->getController();
+$action = $routeMatching->getAction();
 
 ```
