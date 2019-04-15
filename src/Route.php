@@ -46,11 +46,11 @@ class Route
 
     /**
      * Route constructor.
+     * @param string $name
      * @param string $path
      * @param string $controller
      * @param string $action
      * @param array $requirements
-     * @param array $varsNames
      */
     public function __construct(string $name, string $path, string $controller, string $action, array $requirements = [])
     {
@@ -65,7 +65,7 @@ class Route
     /**
      * @return bool
      */
-    public function hasVars()
+    public function hasVars(): bool
     {
         if (empty($this->varsNames)) {
 
@@ -77,9 +77,9 @@ class Route
 
     /**
      * @param string $path
-     * @return null|bool
+     * @return array|null
      */
-    public function match(string $path)
+    public function match(string $path): ?array
     {
         $path = $this->trimPath($path);
         if (preg_match('#^'.$this->generateRegex().'$#sD', $path, $matches)) {
@@ -96,7 +96,7 @@ class Route
     /**
      * @return string
      */
-    private function generateRegex()
+    private function generateRegex(): string
     {
 
         $regex = $this->path;
@@ -134,7 +134,7 @@ class Route
      * @param string $action
      * @return Route
      */
-    public function setAction(string $action)
+    public function setAction(string $action): self
     {
 
         $this->action = $action;
@@ -145,7 +145,7 @@ class Route
      * @param string $controller
      * @return Route
      */
-    public function setController(string $controller)
+    public function setController(string $controller): self
     {
 
         $this->controller = $controller;
@@ -166,7 +166,7 @@ class Route
      * @param string $path
      * @return Route
      */
-    public function setPath(string $path)
+    public function setPath(string $path): self
     {
         $this->path = $this->trimPath($path);
         return $this;
@@ -177,7 +177,7 @@ class Route
      * @param array $varsNames
      * @return Route
      */
-    public function setVarsNames(array $varsNames)
+    public function setVarsNames(array $varsNames): self
     {
         $this->varsNames = $varsNames;
         return $this;
@@ -188,7 +188,7 @@ class Route
      * @param string $varName
      * @return $this
      */
-    public function addVarName(string $varName)
+    public function addVarName(string $varName): self
     {
         $this->varsNames[] = $varName;
         return $this;
@@ -198,17 +198,17 @@ class Route
      * @param array $vars
      * @return Route
      */
-    public function setVars(array $vars = [])
+    public function setVars(array $vars = []): self
     {
         $this->vars = $vars;
         return $this;
     }
 
     /**
-     * @param array $vars
+     * @param string $value
      * @return Route
      */
-    public function addVar(string $value)
+    public function addVar(string $value): self
     {
         $this->vars[] = $value;
         return $this;
@@ -217,7 +217,7 @@ class Route
     /**
      * @return string
      */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }
@@ -225,7 +225,7 @@ class Route
     /**
      * @return string
      */
-    public function getController()
+    public function getController(): string
     {
         return $this->controller;
     }
@@ -233,7 +233,7 @@ class Route
     /**
      * @return array
      */
-    public function getVars()
+    public function getVars(): array
     {
         return $this->vars;
     }
@@ -241,7 +241,7 @@ class Route
     /**
      * @return array
      */
-    public function getVarsNames()
+    public function getVarsNames(): array
     {
         return $this->varsNames;
     }
@@ -271,7 +271,6 @@ class Route
      */
     private function trimPath(string $path) :string
     {
-
         return '/'.rtrim(ltrim(trim($path), '/'), '/');
     }
 }

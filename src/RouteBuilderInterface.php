@@ -13,6 +13,6 @@ interface RouteBuilderInterface
     /**
      * @return array Route
      */
-    public function routes() ;
+    public function routes(): array ;
 
 }

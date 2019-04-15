@@ -2,6 +2,7 @@
 
 
 namespace Webby\Routing;
+
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -42,7 +43,7 @@ class Router implements RouterInterface
      * @param Route $route
      * @return Router
      */
-    public function addRoute(Route $route) : RouterInterface
+    public function addRoute(Route $route): RouterInterface
     {
         if (!in_array($route, $this->routes)) {
             $this->routes[$route->getName()] = $route;
@@ -51,31 +52,37 @@ class Router implements RouterInterface
     }
 
     /**
-     * @param $url
+     * @param ServerRequestInterface $serverRequest
      * @return Route
      * @throws \Exception
      */
-    public function match(ServerRequestInterface $serverRequest) : Route
+    public function match(ServerRequestInterface $serverRequest): Route
     {
         /**
          * @var Route $route
          */
         foreach ($this->routes as $route) {
 
+            $serverParams = $serverRequest->getServerParams();
             $varsValues = $route->match($serverRequest->getUri()->getPath());
-            if (!is_null($varsValues)) {
-
-                if ($route->hasVars()) {
-
-                    $listVars = [];
-                    foreach ($varsValues as $key => $value) {
-                            $listVars[$key] = $value;
-                    }
-
-                    $route->setVars($listVars);
-                }
-                return $route;
+            if (array_key_exists('PATH_INFO', $serverParams)) {
+                $varsValues = $route->match($serverParams['PATH_INFO']);
             }
+
+            if (is_null($varsValues)) {
+                continue;
+            }
+
+            if ($route->hasVars()) {
+                $listVars = [];
+                foreach ($varsValues as $key => $value) {
+                    $listVars[$key] = $value;
+                }
+
+                $route->setVars($listVars);
+            }
+
+            return $route;
         }
 
         throw new \Exception('Aucune route ne correspond à l\'URL', self::NO_ROUTE);
@@ -91,7 +98,7 @@ class Router implements RouterInterface
      */
     public function generateUri(string $name, array $parameters = [], $referenceType = self::ABSOLUTE_PATH): string
     {
-        if (!array_key_exists($name , $this->routes)) {
+        if (!array_key_exists($name, $this->routes)) {
 
             throw new \Exception(sprintf('%s name route doesnt exist', $name));
         }
@@ -108,14 +115,14 @@ class Router implements RouterInterface
                     sprintf(
                         '%s route need parameters: %s',
                         $name,
-                        implode(',',$route->getVarsNames())
+                        implode(',', $route->getVarsNames())
                     )
                 );
             }
 
             foreach ($route->getVarsNames() as $variable) {
-                $varName = trim($variable,'{\}');
-                if (!array_key_exists($varName , $parameters)) {
+                $varName = trim($variable, '{\}');
+                if (!array_key_exists($varName, $parameters)) {
                     throw new \Exception(sprintf('%s not found in parameters to generate url', $varName));
                 }
                 $uri = str_replace($variable, $parameters[$varName], $uri);
