@@ -1,22 +1,22 @@
 {
-    "name": "webby/php-routing",
-    "description": "a simple routing php",
+    "name": "devcoder.xyz/php-router",
+    "description": "a simple router php",
     "type": "package",
     "autoload": {
         "psr-4": {
-            "Webby\\Routing\\": "src",
-            "Test\\Webby\\Routing\\": "tests"
+            "DevCoder\\": "src",
+            "Test\\DevCoder\\": "tests"
         }
     },
     "license": "MIT",
     "authors": [
         {
             "name": "F.Michel",
-            "email": "fadymichel.r@gmail.com"
+            "email": "fadymichel@devcoder.xyz"
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3",
         "psr/http-message": "~1.0"
     },
     "require-dev": {

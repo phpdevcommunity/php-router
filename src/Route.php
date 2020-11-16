@@ -1,10 +1,10 @@
 <?php
 
-namespace Webby\Routing;
+namespace DevCoder;
 
 /**
  * Class Route
- * @package Webbym\Routing
+ * @package DevCoder
  */
 class Route
 {
@@ -14,12 +14,7 @@ class Route
     protected $name;
 
     /**
-     * @var string
-     */
-    protected $action;
-
-    /**
-     * @var string
+     * @var array
      */
     protected $controller;
 
@@ -41,37 +36,28 @@ class Route
     /**
      * @var array
      */
-    protected $requirements = [];
-
+    protected $methods = ['GET', 'POST'];
 
     /**
      * Route constructor.
      * @param string $name
      * @param string $path
-     * @param string $controller
-     * @param string $action
-     * @param array $requirements
+     * @param array $controller
+     * @param array $methods
      */
-    public function __construct(string $name, string $path, string $controller, string $action, array $requirements = [])
+    public function __construct(string $name, string $path, array $controller, array $methods = [])
     {
-        $this->setPath($path)
-            ->setController($controller)
-            ->setName($name)
-            ->setAction($action)
-            ->setRequirements($requirements);
+        $this->name = $name;
+        $this->path = $path;
+        $this->controller = $controller;
+        $this->methods = $methods;
     }
-
 
     /**
      * @return bool
      */
     public function hasVars(): bool
     {
-        if (empty($this->varsNames)) {
-
-            preg_match_all('/{[^}]*}/', $this->path, $matches);
-            $this->setVarsNames(reset($matches));
-        }
         return !empty($this->getVarsNames());
     }
 
@@ -81,34 +67,13 @@ class Route
      */
     public function match(string $path): ?array
     {
-        $path = $this->trimPath($path);
-        if (preg_match('#^'.$this->generateRegex().'$#sD', $path, $matches)) {
-
+        if (preg_match('#^'.$this->generateRegex().'$#sD', $this->trimPath($path), $matches)) {
             return array_filter($matches, function ($key) {
                 return is_string($key);
             }, ARRAY_FILTER_USE_KEY);
         }
 
         return null;
-    }
-
-
-    /**
-     * @return string
-     */
-    private function generateRegex(): string
-    {
-
-        $regex = $this->path;
-        if ($this->hasVars()) {
-
-            foreach ($this->getVarsNames() as $variable) {
-                $varName = trim($variable,'{\}');
-                $regex = str_replace($variable, '(?P<'.$varName.'>[^/]++)', $regex);
-            }
-        }
-
-        return $regex;
     }
 
     /**
@@ -120,40 +85,6 @@ class Route
     }
 
     /**
-     * @param string $name
-     * @return Route
-     */
-    public function setName(string $name): Route
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-
-    /**
-     * @param string $action
-     * @return Route
-     */
-    public function setAction(string $action): self
-    {
-
-        $this->action = $action;
-        return $this;
-    }
-
-    /**
-     * @param string $controller
-     * @return Route
-     */
-    public function setController(string $controller): self
-    {
-
-        $this->controller = $controller;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getPath(): string
@@ -161,116 +92,48 @@ class Route
         return $this->path;
     }
 
-
-    /**
-     * @param string $path
-     * @return Route
-     */
-    public function setPath(string $path): self
+    public function addVar(string $key, string $value): self
     {
-        $this->path = $this->trimPath($path);
+        $this->vars[$key] = $value;
         return $this;
     }
 
-
-    /**
-     * @param array $varsNames
-     * @return Route
-     */
-    public function setVarsNames(array $varsNames): self
-    {
-        $this->varsNames = $varsNames;
-        return $this;
-    }
-
-
-    /**
-     * @param string $varName
-     * @return $this
-     */
-    public function addVarName(string $varName): self
-    {
-        $this->varsNames[] = $varName;
-        return $this;
-    }
-
-    /**
-     * @param array $vars
-     * @return Route
-     */
-    public function setVars(array $vars = []): self
-    {
-        $this->vars = $vars;
-        return $this;
-    }
-
-    /**
-     * @param string $value
-     * @return Route
-     */
-    public function addVar(string $value): self
-    {
-        $this->vars[] = $value;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAction(): string
-    {
-        return $this->action;
-    }
-
-    /**
-     * @return string
-     */
-    public function getController(): string
+    public function getController(): array
     {
         return $this->controller;
     }
 
-    /**
-     * @return array
-     */
     public function getVars(): array
     {
         return $this->vars;
     }
 
-    /**
-     * @return array
-     */
     public function getVarsNames(): array
     {
-        return $this->varsNames;
+        preg_match_all('/{[^}]*}/', $this->path, $matches);
+        return reset($matches);
     }
 
-    /**
-     * @return array
-     */
-    public function getRequirements(): array
+    public function getMethods(): array
     {
-        return $this->requirements;
+        return $this->methods;
     }
 
-    /**
-     * @param array $requirements
-     * @return Route
-     */
-    public function setRequirements(array $requirements = []): Route
-    {
-        $this->requirements = $requirements;
-        return $this;
-    }
-
-
-    /**
-     * @param string $path
-     * @return string
-     */
     private function trimPath(string $path) :string
     {
         return '/'.rtrim(ltrim(trim($path), '/'), '/');
+    }
+
+    /**
+     * @return string
+     */
+    private function generateRegex(): string
+    {
+        $regex = $this->path;
+        foreach ($this->getVarsNames() as $variable) {
+            $varName = trim($variable,'{\}');
+            $regex = str_replace($variable, '(?P<'.$varName.'>[^/]++)', $regex);
+        }
+        return $regex;
     }
 }
