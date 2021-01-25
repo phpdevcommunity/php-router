@@ -14,11 +14,6 @@ class Route
     protected $name;
 
     /**
-     * @var array<string>
-     */
-    protected $controller = [];
-
-    /**
      * @var string
      */
     protected $path;
@@ -26,12 +21,17 @@ class Route
     /**
      * @var array<string>
      */
-    protected $vars = [];
+    protected $controller = [];
 
     /**
      * @var array<string>
      */
     protected $methods = [];
+
+    /**
+     * @var array<string>
+     */
+    protected $vars = [];
 
     public function __construct(string $name, string $path, array $controller, array $methods = ['GET', 'POST'])
     {
@@ -41,16 +41,11 @@ class Route
         $this->methods = $methods;
     }
 
-    public function hasVars(): bool
-    {
-        return $this->getVarsNames() !== [];
-    }
-
     public function match(string $path, string $method): bool
     {
         if (
             in_array($method, $this->getMethods()) &&
-            preg_match('#^' . $this->generateRegex() . '$#sD', $this->trimPath($path), $matches)
+            preg_match('#^' . $this->generateRegex() . '$#sD', self::trimPath($path), $matches)
         ) {
 
             $values = array_filter($matches, function ($key) {
@@ -77,12 +72,6 @@ class Route
         return $this->path;
     }
 
-    public function addVar(string $key, string $value): self
-    {
-        $this->vars[$key] = $value;
-        return $this;
-    }
-
     public function getController(): array
     {
         return $this->controller;
@@ -104,11 +93,6 @@ class Route
         return $this->methods;
     }
 
-    private function trimPath(string $path): string
-    {
-        return '/' . rtrim(ltrim(trim($path), '/'), '/');
-    }
-
     private function generateRegex(): string
     {
         $regex = $this->path;
@@ -117,5 +101,21 @@ class Route
             $regex = str_replace($variable, '(?P<' . $varName . '>[^/]++)', $regex);
         }
         return $regex;
+    }
+
+    public function hasVars(): bool
+    {
+        return $this->getVarsNames() !== [];
+    }
+
+    public function addVar(string $key, string $value): self
+    {
+        $this->vars[$key] = $value;
+        return $this;
+    }
+
+    private static function trimPath(string $path): string
+    {
+        return '/' . rtrim(ltrim(trim($path), '/'), '/');
     }
 }
