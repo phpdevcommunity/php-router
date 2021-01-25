@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fadymichel
- * Date: 20/05/18
- * Time: 01:57
- */
 
 namespace Test\DevCoder;
 
@@ -18,7 +12,6 @@ use DevCoder\Router;
  */
 class RouterTest extends TestCase
 {
-
     /**
      * @var Router
      */
@@ -39,7 +32,6 @@ class RouterTest extends TestCase
             ->add($routeArticleWithParams);
     }
 
-
     public function testGenerateUrl() {
 
         $urlHome = $this->router->generateUri('home_page');
@@ -53,11 +45,4 @@ class RouterTest extends TestCase
         $this->assertEquals($routeArticleWithParams, '/view/article/25/3');
 
     }
-
-    public function testResolveRoute() {
-
-
-
-    }
-
 }

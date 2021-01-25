@@ -14,9 +14,9 @@ class Route
     protected $name;
 
     /**
-     * @var array
+     * @var array<string>
      */
-    protected $controller;
+    protected $controller = [];
 
     /**
      * @var string
@@ -24,28 +24,16 @@ class Route
     protected $path;
 
     /**
-     * @var array
-     */
-    protected $varsNames = [];
-
-    /**
-     * @var array
+     * @var array<string>
      */
     protected $vars = [];
 
     /**
-     * @var array
+     * @var array<string>
      */
-    protected $methods = ['GET', 'POST'];
+    protected $methods = [];
 
-    /**
-     * Route constructor.
-     * @param string $name
-     * @param string $path
-     * @param array $controller
-     * @param array $methods
-     */
-    public function __construct(string $name, string $path, array $controller, array $methods = [])
+    public function __construct(string $name, string $path, array $controller, array $methods = ['GET', 'POST'])
     {
         $this->name = $name;
         $this->path = $path;
@@ -53,40 +41,37 @@ class Route
         $this->methods = $methods;
     }
 
-    /**
-     * @return bool
-     */
     public function hasVars(): bool
     {
-        return !empty($this->getVarsNames());
+        return $this->getVarsNames() !== [];
     }
 
-    /**
-     * @param string $path
-     * @return array|null
-     */
-    public function match(string $path): ?array
+    public function match(string $path, string $method): bool
     {
-        if (preg_match('#^'.$this->generateRegex().'$#sD', $this->trimPath($path), $matches)) {
-            return array_filter($matches, function ($key) {
+        if (
+            in_array($method, $this->getMethods()) &&
+            preg_match('#^' . $this->generateRegex() . '$#sD', $this->trimPath($path), $matches)
+        ) {
+
+            $values = array_filter($matches, function ($key) {
                 return is_string($key);
             }, ARRAY_FILTER_USE_KEY);
+
+            foreach ($values as $key => $value) {
+                $this->addVar($key, $value);
+            }
+
+            return true;
         }
 
-        return null;
+        return false;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
@@ -111,7 +96,7 @@ class Route
     public function getVarsNames(): array
     {
         preg_match_all('/{[^}]*}/', $this->path, $matches);
-        return reset($matches);
+        return reset($matches) ?: [];
     }
 
     public function getMethods(): array
@@ -119,20 +104,17 @@ class Route
         return $this->methods;
     }
 
-    private function trimPath(string $path) :string
+    private function trimPath(string $path): string
     {
-        return '/'.rtrim(ltrim(trim($path), '/'), '/');
+        return '/' . rtrim(ltrim(trim($path), '/'), '/');
     }
 
-    /**
-     * @return string
-     */
     private function generateRegex(): string
     {
         $regex = $this->path;
         foreach ($this->getVarsNames() as $variable) {
-            $varName = trim($variable,'{\}');
-            $regex = str_replace($variable, '(?P<'.$varName.'>[^/]++)', $regex);
+            $varName = trim($variable, '{\}');
+            $regex = str_replace($variable, '(?P<' . $varName . '>[^/]++)', $regex);
         }
         return $regex;
     }
