@@ -2,6 +2,7 @@
 
 namespace DevCoder;
 
+use DevCoder\Exception\RouteNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -10,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Router implements RouterInterface
 {
-    const NO_ROUTE = 1;
+    const NO_ROUTE = 404;
 
     /**
      * @var array<Route>
@@ -62,18 +63,19 @@ class Router implements RouterInterface
             return $route;
         }
 
-        throw new \Exception('Aucune route ne correspond à l\'URL', self::NO_ROUTE);
+        throw new RouteNotFound('No route found for '.$method, self::NO_ROUTE);
     }
 
     public function generateUri(string $name, array $parameters = []): string
     {
         if (!array_key_exists($name, $this->routes)) {
-            throw new \Exception(sprintf('%s name route doesnt exist', $name));
+            throw new \InvalidArgumentException(sprintf('Unknown %s name route', $name));
         }
 
         $route = $this->routes[$name];
-        if ($route->hasVars() && empty($parameters)) {
-            throw new \Exception(sprintf('%s route need parameters: %s', $name, implode(',', $route->getVarsNames()))
+        if ($route->hasVars() && $parameters === []) {
+            throw new \InvalidArgumentException(
+                sprintf('%s route need parameters: %s', $name, implode(',', $route->getVarsNames()))
             );
         }
 
@@ -81,7 +83,7 @@ class Router implements RouterInterface
         foreach ($route->getVarsNames() as $variable) {
             $varName = trim($variable, '{\}');
             if (!array_key_exists($varName, $parameters)) {
-                throw new \Exception(sprintf('%s not found in parameters to generate url', $varName));
+                throw new \InvalidArgumentException(sprintf('%s not found in parameters to generate url', $varName));
             }
             $uri = str_replace($variable, $parameters[$varName], $uri);
         }

@@ -1,10 +1,7 @@
 <?php
 
-
 namespace DevCoder\Exception;
 
-
-class RouteNotFound
+class RouteNotFound extends \Exception
 {
-
 }

@@ -35,6 +35,9 @@ class Route
 
     public function __construct(string $name, string $path, array $controller, array $methods = ['GET', 'POST'])
     {
+        if ($methods === []) {
+            throw new \InvalidArgumentException('HTTP methods argument was empty; must contain at least one method');
+        }
         $this->name = $name;
         $this->path = $path;
         $this->controller = $controller;

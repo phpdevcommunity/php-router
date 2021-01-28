@@ -2,6 +2,7 @@
 
 namespace Test\DevCoder;
 
+use DevCoder\Exception\RouteNotFound;
 use PHPUnit\Framework\TestCase;
 use DevCoder\Route;
 use DevCoder\Router;
@@ -32,6 +33,22 @@ class RouterTest extends TestCase
             ->add($routeArticleWithParams);
     }
 
+    public function testMatchRoute() {
+
+        $route = $this->router->matchFromPath('/view/article/25', 'GET');
+        $this->assertInstanceOf(Route::class, $route);
+
+        $this->assertNotEmpty($route->getController());
+        $this->assertNotEmpty($route->getMethods());
+        $this->assertSame(['id' => '25'], $route->getVars());
+
+
+        $this->assertInstanceOf(Route::class, $this->router->matchFromPath('/home', 'GET'));
+        $this->expectException(RouteNotFound::class);
+        $this->router->matchFromPath('/home', 'PUT');
+
+    }
+
     public function testGenerateUrl() {
 
         $urlHome = $this->router->generateUri('home_page');
@@ -39,10 +56,13 @@ class RouterTest extends TestCase
         $urlArticleWithParam = $this->router->generateUri('article_page_by_id', ['id' => 25]);
         $routeArticleWithParams = $this->router->generateUri('article_page_by_id_and_page', ['id' => 25, 'page' => 3]);
 
-        $this->assertEquals($urlHome, '/home');
-        $this->assertEquals($urlArticle, '/view/article');
-        $this->assertEquals($urlArticleWithParam, '/view/article/25');
-        $this->assertEquals($routeArticleWithParams, '/view/article/25/3');
+        $this->assertSame($urlHome, '/home');
+        $this->assertSame($urlArticle, '/view/article');
+        $this->assertSame($urlArticleWithParam, '/view/article/25');
+        $this->assertSame($routeArticleWithParams, '/view/article/25/3');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->router->generateUri('article_page_by_id_and_page', ['id' => 25]);
 
     }
 }

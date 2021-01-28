@@ -4,6 +4,7 @@ namespace Test\DevCoder;
 
 
 
+use DevCoder\Exception\RouteNotFound;
 use PHPUnit\Framework\TestCase;
 use DevCoder\Route;
 
@@ -33,5 +34,11 @@ class RouteTest extends TestCase {
         $this->assertTrue(!$routeWithAttribute->match('/view/article/1', 'PUT'));
         $this->assertTrue($routeWithAttributes->match('/view/article/1/24','GET'));
         $this->assertTrue($routeWithoutAttribute->match('/view/article/','GET'));
+    }
+
+    public function testException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Route('view_articles','/view', ['App\\Controller\\HomeController', 'home'], []);
     }
 }
