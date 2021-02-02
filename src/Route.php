@@ -61,7 +61,6 @@ class Route
 
             return true;
         }
-
         return false;
     }
 
@@ -80,11 +79,6 @@ class Route
         return $this->controller;
     }
 
-    public function getVars(): array
-    {
-        return $this->vars;
-    }
-
     public function getVarsNames(): array
     {
         preg_match_all('/{[^}]*}/', $this->path, $matches);
@@ -96,6 +90,22 @@ class Route
         return $this->methods;
     }
 
+    public function hasVars(): bool
+    {
+        return $this->getVarsNames() !== [];
+    }
+
+    public function getVars(): array
+    {
+        return $this->vars;
+    }
+
+    private function addVar(string $key, string $value): self
+    {
+        $this->vars[$key] = $value;
+        return $this;
+    }
+
     private function generateRegex(): string
     {
         $regex = $this->path;
@@ -104,17 +114,6 @@ class Route
             $regex = str_replace($variable, '(?P<' . $varName . '>[^/]++)', $regex);
         }
         return $regex;
-    }
-
-    public function hasVars(): bool
-    {
-        return $this->getVarsNames() !== [];
-    }
-
-    public function addVar(string $key, string $value): self
-    {
-        $this->vars[$key] = $value;
-        return $this;
     }
 
     private static function trimPath(string $path): string

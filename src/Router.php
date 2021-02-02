@@ -27,7 +27,6 @@ class Router implements RouterInterface
         foreach ($routes as $route) {
             $this->add($route);
         }
-
     }
 
     public function add(Route $route): self
