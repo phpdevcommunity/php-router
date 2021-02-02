@@ -79,15 +79,15 @@ class Route
         return $this->controller;
     }
 
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
     public function getVarsNames(): array
     {
         preg_match_all('/{[^}]*}/', $this->path, $matches);
         return reset($matches) ?: [];
-    }
-
-    public function getMethods(): array
-    {
-        return $this->methods;
     }
 
     public function hasVars(): bool
