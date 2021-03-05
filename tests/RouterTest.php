@@ -38,7 +38,7 @@ class RouterTest extends TestCase
         $route = $this->router->matchFromPath('/view/article/25', 'GET');
         $this->assertInstanceOf(Route::class, $route);
 
-        $this->assertNotEmpty($route->getController());
+        $this->assertNotEmpty($route->getParameters());
         $this->assertNotEmpty($route->getMethods());
         $this->assertSame(['id' => '25'], $route->getVars());
 

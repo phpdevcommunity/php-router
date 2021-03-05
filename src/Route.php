@@ -21,7 +21,7 @@ class Route
     /**
      * @var array<string>
      */
-    protected $controller = [];
+    protected $parameters = [];
 
     /**
      * @var array<string>
@@ -33,14 +33,25 @@ class Route
      */
     protected $vars = [];
 
-    public function __construct(string $name, string $path, array $controller, array $methods = ['GET', 'POST'])
+    /**
+     * Route constructor.
+     * @param string $name
+     * @param string $path
+     * @param array $parameters
+     *    $parameters = [
+     *      0 => (string) Controller name : HomeController::class.
+     *      1 => (string|null) Method name or null if invoke method
+     *    ]
+     * @param array $methods
+     */
+    public function __construct(string $name, string $path, array $parameters, array $methods = ['GET', 'POST'])
     {
         if ($methods === []) {
             throw new \InvalidArgumentException('HTTP methods argument was empty; must contain at least one method');
         }
         $this->name = $name;
         $this->path = $path;
-        $this->controller = $controller;
+        $this->parameters = $parameters;
         $this->methods = $methods;
     }
 
@@ -74,9 +85,9 @@ class Route
         return $this->path;
     }
 
-    public function getController(): array
+    public function getParameters(): array
     {
-        return $this->controller;
+        return $this->parameters;
     }
 
     public function getMethods(): array
