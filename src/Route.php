@@ -44,7 +44,7 @@ class Route
      *    ]
      * @param array $methods
      */
-    public function __construct(string $name, string $path, array $parameters, array $methods = ['GET', 'POST'])
+    public function __construct(string $name, string $path, array $parameters, array $methods = ['GET'])
     {
         if ($methods === []) {
             throw new \InvalidArgumentException('HTTP methods argument was empty; must contain at least one method');

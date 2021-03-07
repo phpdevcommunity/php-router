@@ -2,6 +2,7 @@
 
 namespace DevCoder;
 
+use DevCoder\Exception\RouteNotFound;
 use Exception;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -23,16 +24,12 @@ final class RouterMiddleware implements MiddlewareInterface
      * @var RouterInterface
      */
     private $router;
+
     /**
      * @var ResponseFactoryInterface
      */
     private $responseFactory;
 
-    /**
-     * RouterMiddleware constructor.
-     * @param RouterInterface $router
-     * @param ResponseFactoryInterface $responseFactory
-     */
     public function __construct(RouterInterface $router, ResponseFactoryInterface $responseFactory)
     {
         $this->router = $router;
@@ -54,8 +51,10 @@ final class RouterMiddleware implements MiddlewareInterface
                 $request = $request->withAttribute($key, $value);
             }
 
-        } catch (Exception $exception) {
+        } catch (RouteNotFound $e) {
             return $this->responseFactory->createResponse(404);
+        } catch (\Throwable $e) {
+            throw $e;
         }
 
         return $handler->handle($request);

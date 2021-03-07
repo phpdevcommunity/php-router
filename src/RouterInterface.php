@@ -2,6 +2,7 @@
 
 namespace DevCoder;
 
+use DevCoder\Exception\RouteNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -13,7 +14,7 @@ interface RouterInterface
     /**
      * @param ServerRequestInterface $serverRequest
      * @return Route
-     * @throws \Exception if no found route.
+     * @throws RouteNotFound if no found route.
      */
     public function match(ServerRequestInterface $serverRequest) : Route;
 
@@ -21,7 +22,7 @@ interface RouterInterface
      * @param string $path
      * @param string $method
      * @return Route
-     * @throws \Exception if no found route.
+     * @throws RouteNotFound if no found route.
      */
     public function matchFromPath(string $path, string $method) : Route;
 
@@ -29,7 +30,7 @@ interface RouterInterface
      * @param string $name
      * @param array $parameters
      * @return string
-     * @throws \Exception if unable to generate the given URI.
+     * @throws \InvalidArgumentException if unable to generate the given URI.
      */
     public function generateUri(string $name, array $parameters = []) : string;
 }

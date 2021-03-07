@@ -37,22 +37,11 @@ class Router implements RouterInterface
         return $this;
     }
 
-    /**
-     * @param ServerRequestInterface $serverRequest
-     * @return Route
-     * @throws \Exception
-     */
     public function match(ServerRequestInterface $serverRequest): Route
     {
         return $this->matchFromPath($serverRequest->getUri()->getPath(), $serverRequest->getMethod());
     }
 
-    /**
-     * @param string $path
-     * @param string $method
-     * @return Route
-     * @throws \Exception
-     */
     public function matchFromPath(string $path, string $method): Route
     {
         foreach ($this->routes as $route) {
@@ -62,7 +51,7 @@ class Router implements RouterInterface
             return $route;
         }
 
-        throw new RouteNotFound('No route found for '.$method, self::NO_ROUTE);
+        throw new RouteNotFound('No route found for ' . $method, self::NO_ROUTE);
     }
 
     public function generateUri(string $name, array $parameters = []): string
