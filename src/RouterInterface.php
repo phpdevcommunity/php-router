@@ -1,14 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DevCoder;
 
 use DevCoder\Exception\RouteNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Interface RouterInterface
- * @package DevCoder\Routing
- */
 interface RouterInterface
 {
     /**
@@ -16,7 +14,7 @@ interface RouterInterface
      * @return Route
      * @throws RouteNotFound if no found route.
      */
-    public function match(ServerRequestInterface $serverRequest) : Route;
+    public function match(ServerRequestInterface $serverRequest): Route;
 
     /**
      * @param string $path
@@ -24,7 +22,7 @@ interface RouterInterface
      * @return Route
      * @throws RouteNotFound if no found route.
      */
-    public function matchFromPath(string $path, string $method) : Route;
+    public function matchFromPath(string $path, string $method): Route;
 
     /**
      * @param string $name
@@ -32,5 +30,5 @@ interface RouterInterface
      * @return string
      * @throws \InvalidArgumentException if unable to generate the given URI.
      */
-    public function generateUri(string $name, array $parameters = []) : string;
+    public function generateUri(string $name, array $parameters = []): string;
 }

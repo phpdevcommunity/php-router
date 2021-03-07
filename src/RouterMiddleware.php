@@ -1,24 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DevCoder;
 
 use DevCoder\Exception\RouteNotFound;
-use Exception;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Class RouterMiddleware
- * @package App\Middleware
- */
 final class RouterMiddleware implements MiddlewareInterface
 {
-    const CONTROLLER = '_controller';
-    const ACTION = '_action';
-    const NAME = '_name';
+    public const CONTROLLER = '_controller';
+    public const ACTION = '_action';
+    public const NAME = '_name';
 
     /**
      * @var RouterInterface
@@ -30,33 +27,35 @@ final class RouterMiddleware implements MiddlewareInterface
      */
     private $responseFactory;
 
-    public function __construct(RouterInterface $router, ResponseFactoryInterface $responseFactory)
+    public function __construct(
+        RouterInterface $router,
+        ResponseFactoryInterface $responseFactory)
     {
         $this->router = $router;
         $this->responseFactory = $responseFactory;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler): ResponseInterface
     {
         try {
             $route = $this->router->match($request);
             $controller = $route->getParameters();
             $attributes = array_merge([
-                static::CONTROLLER => $controller[0],
-                static::ACTION => $controller[1] ?? null,
-                static::NAME => $route->getName(),
+                self::CONTROLLER => $controller[0],
+                self::ACTION => $controller[1] ?? null,
+                self::NAME => $route->getName(),
             ], $route->getVars());
 
             foreach ($attributes as $key => $value) {
                 $request = $request->withAttribute($key, $value);
             }
-
-        } catch (RouteNotFound $e) {
+        } catch (RouteNotFound $exception) {
             return $this->responseFactory->createResponse(404);
-        } catch (\Throwable $e) {
-            throw $e;
+        } catch (\Throwable $exception) {
+            throw $exception;
         }
-
         return $handler->handle($request);
     }
 }

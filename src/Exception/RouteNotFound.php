@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DevCoder\Exception;
 
-class RouteNotFound extends \Exception
+final class RouteNotFound extends \Exception
 {
 }

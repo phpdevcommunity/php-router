@@ -1,22 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DevCoder;
 
 use DevCoder\Exception\RouteNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Class Router
- * @package DevCoder\Routing
- */
-class Router implements RouterInterface
+final class Router implements RouterInterface
 {
-    const NO_ROUTE = 404;
+    private const NO_ROUTE = 404;
 
     /**
      * @var array<Route>
      */
-    protected $routes = [];
+    private $routes = [];
 
     /**
      * Router constructor.
@@ -31,7 +29,7 @@ class Router implements RouterInterface
 
     public function add(Route $route): self
     {
-        if (!in_array($route, $this->routes)) {
+        if (in_array($route, $this->routes) === false) {
             $this->routes[$route->getName()] = $route;
         }
         return $this;
@@ -51,31 +49,40 @@ class Router implements RouterInterface
             return $route;
         }
 
-        throw new RouteNotFound('No route found for ' . $method, self::NO_ROUTE);
+        throw new RouteNotFound(
+            'No route found for ' . $method,
+            self::NO_ROUTE
+        );
     }
 
     public function generateUri(string $name, array $parameters = []): string
     {
-        if (!array_key_exists($name, $this->routes)) {
-            throw new \InvalidArgumentException(sprintf('Unknown %s name route', $name));
+        if (array_key_exists($name, $this->routes) === false) {
+            throw new \InvalidArgumentException(
+                sprintf('Unknown %s name route', $name)
+            );
         }
-
         $route = $this->routes[$name];
         if ($route->hasVars() && $parameters === []) {
             throw new \InvalidArgumentException(
                 sprintf('%s route need parameters: %s', $name, implode(',', $route->getVarsNames()))
             );
         }
+        return self::resolveUri($route, $parameters);
+    }
 
+    private static function resolveUri(Route $route, array $parameters): string
+    {
         $uri = $route->getPath();
         foreach ($route->getVarsNames() as $variable) {
             $varName = trim($variable, '{\}');
-            if (!array_key_exists($varName, $parameters)) {
-                throw new \InvalidArgumentException(sprintf('%s not found in parameters to generate url', $varName));
+            if (array_key_exists($varName, $parameters) === false) {
+                throw new \InvalidArgumentException(
+                    sprintf('%s not found in parameters to generate url', $varName)
+                );
             }
             $uri = str_replace($variable, $parameters[$varName], $uri);
         }
-
         return $uri;
     }
 }

@@ -1,37 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DevCoder;
 
 /**
  * Class Route
  * @package DevCoder
  */
-class Route
+final class Route
 {
     /**
      * @var string
      */
-    protected $name;
+    private $name;
 
     /**
      * @var string
      */
-    protected $path;
+    private $path;
 
     /**
      * @var array<string>
      */
-    protected $parameters = [];
+    private $parameters = [];
 
     /**
      * @var array<string>
      */
-    protected $methods = [];
+    private $methods = [];
 
     /**
      * @var array<string>
      */
-    protected $vars = [];
+    private $vars = [];
 
     /**
      * Route constructor.
@@ -57,19 +59,19 @@ class Route
 
     public function match(string $path, string $method): bool
     {
-        if (
-            in_array($method, $this->getMethods()) &&
-            preg_match('#^' . $this->generateRegex() . '$#sD', self::trimPath($path), $matches)
-        ) {
+        $regex = $this->getPath();
+        foreach ($this->getVarsNames() as $variable) {
+            $varName = trim($variable, '{\}');
+            $regex = str_replace($variable, '(?P<' . $varName . '>[^/]++)', $regex);
+        }
 
-            $values = array_filter($matches, function ($key) {
+        if (in_array($method, $this->getMethods()) && preg_match('#^' . $regex . '$#sD', self::trimPath($path), $matches)) {
+            $values = array_filter($matches, static function ($key) {
                 return is_string($key);
             }, ARRAY_FILTER_USE_KEY);
-
             foreach ($values as $key => $value) {
-                $this->addVar($key, $value);
+                $this->vars[$key] = $value;
             }
-
             return true;
         }
         return false;
@@ -98,7 +100,7 @@ class Route
     public function getVarsNames(): array
     {
         preg_match_all('/{[^}]*}/', $this->path, $matches);
-        return reset($matches) ?: [];
+        return reset($matches) ?? [];
     }
 
     public function hasVars(): bool
@@ -109,22 +111,6 @@ class Route
     public function getVars(): array
     {
         return $this->vars;
-    }
-
-    private function addVar(string $key, string $value): self
-    {
-        $this->vars[$key] = $value;
-        return $this;
-    }
-
-    private function generateRegex(): string
-    {
-        $regex = $this->path;
-        foreach ($this->getVarsNames() as $variable) {
-            $varName = trim($variable, '{\}');
-            $regex = str_replace($variable, '(?P<' . $varName . '>[^/]++)', $regex);
-        }
-        return $regex;
     }
 
     private static function trimPath(string $path): string
