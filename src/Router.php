@@ -12,9 +12,14 @@ final class Router implements RouterInterface
     private const NO_ROUTE = 404;
 
     /**
-     * @var array<Route>
+     * @var \ArrayIterator<Route>
      */
-    private $routes = [];
+    private $routes;
+
+    /**
+     * @var UrlGenerator
+     */
+    private $urlGenerator;
 
     /**
      * Router constructor.
@@ -22,16 +27,13 @@ final class Router implements RouterInterface
      */
     public function __construct(array $routes = [])
     {
-        foreach ($routes as $route) {
-            $this->add($route);
-        }
+        $this->routes = new \ArrayIterator(array_unique($routes));
+        $this->urlGenerator = new UrlGenerator($this->routes);
     }
 
     public function add(Route $route): self
     {
-        if (in_array($route, $this->routes) === false) {
-            $this->routes[$route->getName()] = $route;
-        }
+        $this->routes->offsetSet($route->getName(), $route);
         return $this;
     }
 
@@ -57,32 +59,6 @@ final class Router implements RouterInterface
 
     public function generateUri(string $name, array $parameters = []): string
     {
-        if (array_key_exists($name, $this->routes) === false) {
-            throw new \InvalidArgumentException(
-                sprintf('Unknown %s name route', $name)
-            );
-        }
-        $route = $this->routes[$name];
-        if ($route->hasVars() && $parameters === []) {
-            throw new \InvalidArgumentException(
-                sprintf('%s route need parameters: %s', $name, implode(',', $route->getVarsNames()))
-            );
-        }
-        return self::resolveUri($route, $parameters);
-    }
-
-    private static function resolveUri(Route $route, array $parameters): string
-    {
-        $uri = $route->getPath();
-        foreach ($route->getVarsNames() as $variable) {
-            $varName = trim($variable, '{\}');
-            if (array_key_exists($varName, $parameters) === false) {
-                throw new \InvalidArgumentException(
-                    sprintf('%s not found in parameters to generate url', $varName)
-                );
-            }
-            $uri = str_replace($variable, $parameters[$varName], $uri);
-        }
-        return $uri;
+        return $this->urlGenerator->generate($name, $parameters);
     }
 }
