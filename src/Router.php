@@ -27,8 +27,11 @@ final class Router implements RouterInterface
      */
     public function __construct(array $routes = [])
     {
-        $this->routes = new \ArrayIterator(array_unique($routes));
+        $this->routes = new \ArrayIterator();
         $this->urlGenerator = new UrlGenerator($this->routes);
+        foreach (array_unique($routes) as $route) {
+            $this->add($route);
+        }
     }
 
     public function add(Route $route): self
@@ -60,5 +63,10 @@ final class Router implements RouterInterface
     public function generateUri(string $name, array $parameters = []): string
     {
         return $this->urlGenerator->generate($name, $parameters);
+    }
+
+    public function getUrlgenerator(): UrlGenerator
+    {
+        return $this->urlGenerator;
     }
 }
