@@ -7,18 +7,18 @@ namespace DevCoder;
 final class UrlGenerator
 {
     /**
-     * @var \ArrayIterator<Route>
+     * @var \ArrayAccess<Route>
      */
     private $routes;
 
-    public function __construct(\ArrayIterator $routes)
+    public function __construct(\ArrayAccess $routes)
     {
         $this->routes = $routes;
     }
 
     public function generate(string $name, array $parameters = []): string
     {
-        if (array_key_exists($name, $this->routes) === false) {
+        if ($this->routes->offsetExists($name) === false) {
             throw new \InvalidArgumentException(
                 sprintf('Unknown %s name route', $name)
             );

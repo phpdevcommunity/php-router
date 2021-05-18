@@ -29,7 +29,7 @@ final class Router implements RouterInterface
     {
         $this->routes = new \ArrayIterator();
         $this->urlGenerator = new UrlGenerator($this->routes);
-        foreach (array_unique($routes) as $route) {
+        foreach ($routes as $route) {
             $this->add($route);
         }
     }
