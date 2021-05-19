@@ -1,5 +1,13 @@
-#A simple Router for PHP App using PSR-7 message implementation
+# A simple Router for PHP App using PSR-7 message implementation
 
+## Installation
+
+Use [Composer](https://getcomposer.org/)
+
+### Composer Require
+```
+composer require devcoder-xyz/php-router
+```
 
 ## Requirements
 
