@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace DevCoder;
 
+use DevCoder\Traits\RouteTrait;
+
 /**
  * Class Route
  * @package DevCoder
  */
 final class Route
 {
+    use RouteTrait;
+
     /**
      * @var string
      */
@@ -21,9 +25,9 @@ final class Route
     private $path;
 
     /**
-     * @var array<string>
+     * @var mixed
      */
-    private $parameters = [];
+    private $handler;
 
     /**
      * @var array<string>
@@ -33,27 +37,27 @@ final class Route
     /**
      * @var array<string>
      */
-    private $vars = [];
+    private $attributes = [];
 
     /**
      * Route constructor.
      * @param string $name
      * @param string $path
-     * @param array $parameters
-     *    $parameters = [
+     * @param mixed $handler
+     *    $handler = [
      *      0 => (string) Controller name : HomeController::class.
      *      1 => (string|null) Method name or null if invoke method
      *    ]
      * @param array $methods
      */
-    public function __construct(string $name, string $path, array $parameters, array $methods = ['GET'])
+    public function __construct(string $name, string $path, $handler, array $methods = ['GET'])
     {
         if ($methods === []) {
             throw new \InvalidArgumentException('HTTP methods argument was empty; must contain at least one method');
         }
         $this->name = $name;
         $this->path = $path;
-        $this->parameters = $parameters;
+        $this->handler = $handler;
         $this->methods = $methods;
     }
 
@@ -70,7 +74,7 @@ final class Route
                 return is_string($key);
             }, ARRAY_FILTER_USE_KEY);
             foreach ($values as $key => $value) {
-                $this->vars[$key] = $value;
+                $this->attributes[$key] = $value;
             }
             return true;
         }
@@ -87,9 +91,17 @@ final class Route
         return $this->path;
     }
 
-    public function getParameters(): array
+    /**
+     * @deprecated use getHandler()
+     */
+    public function getParameters()
     {
-        return $this->parameters;
+        return $this->getHandler();
+    }
+
+    public function getHandler()
+    {
+        return $this->handler;
     }
 
     public function getMethods(): array
@@ -103,13 +115,32 @@ final class Route
         return reset($matches) ?? [];
     }
 
+    /**
+     * @deprecated use hasAttributes()
+     */
     public function hasVars(): bool
+    {
+        return $this->hasAttributes();
+    }
+
+    public function hasAttributes(): bool
     {
         return $this->getVarsNames() !== [];
     }
 
+    /**
+     * @deprecated use getAttributes()
+     */
     public function getVars(): array
     {
-        return $this->vars;
+        return $this->getAttributes();
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }

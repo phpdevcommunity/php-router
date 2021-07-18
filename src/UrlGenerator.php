@@ -23,8 +23,9 @@ final class UrlGenerator
                 sprintf('Unknown %s name route', $name)
             );
         }
+        /*** @var Route $route */
         $route = $this->routes[$name];
-        if ($route->hasVars() && $parameters === []) {
+        if ($route->hasAttributes() === true && $parameters === []) {
             throw new \InvalidArgumentException(
                 sprintf('%s route need parameters: %s', $name, implode(',', $route->getVarsNames()))
             );

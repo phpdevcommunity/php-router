@@ -12,7 +12,7 @@ final class Router implements RouterInterface
     private const NO_ROUTE = 404;
 
     /**
-     * @var \ArrayIterator<Route>
+     * @var \ArrayObject<Route>
      */
     private $routes;
 
@@ -27,7 +27,7 @@ final class Router implements RouterInterface
      */
     public function __construct(array $routes = [])
     {
-        $this->routes = new \ArrayIterator();
+        $this->routes = new \ArrayObject();
         $this->urlGenerator = new UrlGenerator($this->routes);
         foreach ($routes as $route) {
             $this->add($route);
@@ -65,7 +65,7 @@ final class Router implements RouterInterface
         return $this->urlGenerator->generate($name, $parameters);
     }
 
-    public function getUrlgenerator(): UrlGenerator
+    public function getUrlGenerator(): UrlGenerator
     {
         return $this->urlGenerator;
     }

@@ -41,12 +41,12 @@ final class RouterMiddleware implements MiddlewareInterface
     {
         try {
             $route = $this->router->match($request);
-            $controller = $route->getParameters();
+            $routeHandler = $route->getHandler();
             $attributes = array_merge([
-                self::CONTROLLER => $controller[0],
-                self::ACTION => $controller[1] ?? null,
+                self::CONTROLLER => $routeHandler[0],
+                self::ACTION => $routeHandler[1] ?? null,
                 self::NAME => $route->getName(),
-            ], $route->getVars());
+            ], $route->getAttributes());
 
             foreach ($attributes as $key => $value) {
                 $request = $request->withAttribute($key, $value);
