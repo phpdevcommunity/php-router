@@ -99,8 +99,13 @@ try {
 ```
 How to Define Route methods
 ```php
-new \DevCoder\Route('api_articles_post', '/api/articles', [ArticleController::class, 'post'], ['POST']);
-new \DevCoder\Route('api_articles_put', '/api/articles/{id}', [ArticleController::class, 'put'], ['PUT']);
+$route = new \DevCoder\Route('api_articles_post', '/api/articles', [ArticleController::class, 'post'], ['POST']);
+$route = new \DevCoder\Route('api_articles_put', '/api/articles/{id}', [ArticleController::class, 'put'], ['PUT']);
+/**
+* ---- OR -----
+*/
+$route = \DevCoder\Route::post('api_articles_post', '/api/articles', [ArticleController::class, 'post']);
+$route = \DevCoder\Route::put('api_articles_put', '/api/articles/{id}', [ArticleController::class, 'put']);
 ```
 Generating URLs
 ```php
