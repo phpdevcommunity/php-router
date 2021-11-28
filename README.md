@@ -1,5 +1,7 @@
 # A simple Router for PHP App using PSR-7 message implementation
 
+[![Latest Stable Version](http://poser.pugx.org/devcoder-xyz/php-router/v)](https://packagist.org/packages/devcoder-xyz/php-router) [![Total Downloads](http://poser.pugx.org/devcoder-xyz/php-router/downloads)](https://packagist.org/packages/devcoder-xyz/php-router) [![Latest Unstable Version](http://poser.pugx.org/devcoder-xyz/php-router/v/unstable)](https://packagist.org/packages/devcoder-xyz/php-router) [![License](http://poser.pugx.org/devcoder-xyz/php-router/license)](https://packagist.org/packages/devcoder-xyz/php-router) [![PHP Version Require](http://poser.pugx.org/devcoder-xyz/php-router/require/php)](https://packagist.org/packages/devcoder-xyz/php-router)
+
 ## Installation
 
 Use [Composer](https://getcomposer.org/)
