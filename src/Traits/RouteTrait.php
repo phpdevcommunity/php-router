@@ -6,23 +6,23 @@ use DevCoder\Route as BaseRoute;
 
 trait RouteTrait
 {
-    public static function get(string $name, string $path, array $parameters): BaseRoute
+    public static function get(string $name, string $path, $handler): BaseRoute
     {
-        return new BaseRoute($name, $path, $parameters);
+        return new BaseRoute($name, $path, $handler);
     }
 
-    public static function post(string $name, string $path, array $parameters): BaseRoute
+    public static function post(string $name, string $path, $handler): BaseRoute
     {
-        return new BaseRoute($name, $path, $parameters, ['POST']);
+        return new BaseRoute($name, $path, $handler, ['POST']);
     }
 
-    public static function put(string $name, string $path, array $parameters): BaseRoute
+    public static function put(string $name, string $path, $handler): BaseRoute
     {
-        return new BaseRoute($name, $path, $parameters, ['PUT']);
+        return new BaseRoute($name, $path, $handler, ['PUT']);
     }
 
-    public static function delete(string $name, string $path, array $parameters): BaseRoute
+    public static function delete(string $name, string $path, $handler): BaseRoute
     {
-        return new BaseRoute($name, $path, $parameters, ['DELETE']);
+        return new BaseRoute($name, $path, $handler, ['DELETE']);
     }
 }

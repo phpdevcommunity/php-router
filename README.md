@@ -13,9 +13,9 @@ composer require devcoder-xyz/php-router
 
 ## Requirements
 
-* PHP version 7.3
+* PHP version 7.4
 * Enable URL rewriting on your web server
-* Need package for PSR-7 HTTP Message
+* Optional : Need package for PSR-7 HTTP Message
   (example : guzzlehttp/psr7 )
 
 **How to use ?**
@@ -61,42 +61,48 @@ class ArticleController {
     }
 }
 
-$router = new \DevCoder\Router([
+$routes = [
     new \DevCoder\Route('home_page', '/', [IndexController::class]),
     new \DevCoder\Route('api_articles_collection', '/api/articles', [ArticleController::class, 'getAll']),
     new \DevCoder\Route('api_articles', '/api/articles/{id}', [ArticleController::class, 'get']),
-]);
+];
+$router = new \DevCoder\Router($routes, 'http://localhost');
 ```
-##Example
-$_SERVER['REQUEST_URI'] = '/api/articles/2'
-$_SERVER['REQUEST_METHOD'] = 'GET'
+
+## Example
+
 ```php
 try {
     // Example
+    
     // \Psr\Http\Message\ServerRequestInterface
-    //$route = $router->match(ServerRequestFactory::fromGlobals());
+    $route = $router->match(ServerRequestFactory::fromGlobals());
     // OR
-
+    
     // $_SERVER['REQUEST_URI'] = '/api/articles/2'
     // $_SERVER['REQUEST_METHOD'] = 'GET'
     $route = $router->matchFromPath($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
-    $parameters = $route->getParameters();
-    // $arguments = ['id' => 2]
-    $arguments = $route->getVars();
+    $handler = $route->getHandler();
+    // $attributes = ['id' => 2]
+    $attributes = $route->getAttributes();
 
-    $controllerName = $parameters[0];
-    $methodName = $parameters[1] ?? null;
+    $controllerName = $handler[0];
+    $methodName = $handler[1] ?? null;
 
     $controller = new $controllerName();
     if (!is_callable($controller)) {
         $controller =  [$controller, $methodName];
     }
 
-    echo $controller(...array_values($arguments));
+    echo $controller(...array_values($attributes));
 
-} catch (\Exception $exception) {
+} catch (\DevCoder\Exception\MethodNotAllowed $exception) {
+    header("HTTP/1.0 405 Method Not Allowed");
+    exit();
+} catch (\DevCoder\Exception\RouteNotFound $exception) {
     header("HTTP/1.0 404 Not Found");
+    exit();
 }
 ```
 How to Define Route methods
@@ -115,8 +121,11 @@ echo $router->generateUri('home_page');
 // /
 echo $router->generateUri('api_articles', ['id' => 1]);
 // /api/articles/1
+
+echo $router->generateUri('api_articles', ['id' => 1], true);
+// http://localhost/api/articles/1
 ```
 
-Ideal for small project
+Ideal for small project.
 Simple and easy!
 [https://github.com/devcoder-xyz/php-router](https://github.com/devcoder-xyz/php-router)

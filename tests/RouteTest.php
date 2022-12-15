@@ -30,10 +30,9 @@ class RouteTest extends TestCase {
         $routeWithAttributes = new Route('view_article_page','/view/article/{article}/{page}', ['App\\Controller\\HomeController', 'home']);
         $routeWithoutAttribute = new Route('view_articles','/view/article', ['App\\Controller\\HomeController', 'home']);
 
-        $this->assertTrue($routeWithAttribute->match('/view/article/1', 'GET'));
-        $this->assertTrue(!$routeWithAttribute->match('/view/article/1', 'PUT'));
-        $this->assertTrue($routeWithAttributes->match('/view/article/1/24','GET'));
-        $this->assertTrue($routeWithoutAttribute->match('/view/article/','GET'));
+        $this->assertTrue($routeWithAttribute->match('/view/article/1'));
+        $this->assertTrue($routeWithAttributes->match('/view/article/1/24'));
+        $this->assertTrue($routeWithoutAttribute->match('/view/article/'));
     }
 
     public function testException()

@@ -4,33 +4,45 @@ declare(strict_types=1);
 
 namespace DevCoder;
 
+use ArrayAccess;
+use InvalidArgumentException;
+use function array_key_exists;
+use function implode;
+use function sprintf;
+use function str_replace;
+use function trim;
+
 final class UrlGenerator
 {
-    /**
-     * @var \ArrayAccess<Route>
-     */
-    private $routes;
+    private ArrayAccess $routes;
+    private string $defaultUri;
 
-    public function __construct(\ArrayAccess $routes)
+    public function __construct(ArrayAccess $routes, string $defaultUri = '')
     {
         $this->routes = $routes;
+        $this->defaultUri = $defaultUri;
     }
 
-    public function generate(string $name, array $parameters = []): string
+    public function generate(string $name, array $parameters = [], bool $absoluteUrl = false): string
     {
         if ($this->routes->offsetExists($name) === false) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('Unknown %s name route', $name)
             );
         }
         /*** @var Route $route */
         $route = $this->routes[$name];
         if ($route->hasAttributes() === true && $parameters === []) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('%s route need parameters: %s', $name, implode(',', $route->getVarsNames()))
             );
         }
-        return self::resolveUri($route, $parameters);
+
+        $url = self::resolveUri($route, $parameters);
+        if ($absoluteUrl === true) {
+            $url = ltrim(Helper::trimPath($this->defaultUri), '/') . $url;
+        }
+        return $url;
     }
 
     private static function resolveUri(Route $route, array $parameters): string
@@ -39,7 +51,7 @@ final class UrlGenerator
         foreach ($route->getVarsNames() as $variable) {
             $varName = trim($variable, '{\}');
             if (array_key_exists($varName, $parameters) === false) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     sprintf('%s not found in parameters to generate url', $varName)
                 );
             }

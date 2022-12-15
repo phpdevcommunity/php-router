@@ -5,6 +5,14 @@ declare(strict_types=1);
 namespace DevCoder;
 
 use DevCoder\Traits\RouteTrait;
+use InvalidArgumentException;
+use function array_filter;
+use function is_string;
+use function preg_match;
+use function preg_match_all;
+use function reset;
+use function str_replace;
+use function trim;
 
 /**
  * Class Route
@@ -14,15 +22,8 @@ final class Route
 {
     use RouteTrait;
 
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $path;
+    private string $name;
+    private string $path;
 
     /**
      * @var mixed
@@ -32,7 +33,7 @@ final class Route
     /**
      * @var array<string>
      */
-    private $methods = [];
+    private array $methods = [];
 
     /**
      * @var array<string>
@@ -53,15 +54,15 @@ final class Route
     public function __construct(string $name, string $path, $handler, array $methods = ['GET'])
     {
         if ($methods === []) {
-            throw new \InvalidArgumentException('HTTP methods argument was empty; must contain at least one method');
+            throw new InvalidArgumentException('HTTP methods argument was empty; must contain at least one method');
         }
         $this->name = $name;
-        $this->path = $path;
+        $this->path = Helper::trimPath($path);
         $this->handler = $handler;
         $this->methods = $methods;
     }
 
-    public function match(string $path, string $method): bool
+    public function match(string $path): bool
     {
         $regex = $this->getPath();
         foreach ($this->getVarsNames() as $variable) {
@@ -69,7 +70,7 @@ final class Route
             $regex = str_replace($variable, '(?P<' . $varName . '>[^/]++)', $regex);
         }
 
-        if (in_array($method, $this->getMethods()) && preg_match('#^' . $regex . '$#sD', Helper::trimPath($path), $matches)) {
+        if (preg_match('#^' . $regex . '$#sD', Helper::trimPath($path), $matches)) {
             $values = array_filter($matches, static function ($key) {
                 return is_string($key);
             }, ARRAY_FILTER_USE_KEY);
@@ -91,14 +92,6 @@ final class Route
         return $this->path;
     }
 
-    /**
-     * @deprecated use getHandler()
-     */
-    public function getParameters()
-    {
-        return $this->getHandler();
-    }
-
     public function getHandler()
     {
         return $this->handler;
@@ -115,25 +108,9 @@ final class Route
         return reset($matches) ?? [];
     }
 
-    /**
-     * @deprecated use hasAttributes()
-     */
-    public function hasVars(): bool
-    {
-        return $this->hasAttributes();
-    }
-
     public function hasAttributes(): bool
     {
         return $this->getVarsNames() !== [];
-    }
-
-    /**
-     * @deprecated use getAttributes()
-     */
-    public function getVars(): array
-    {
-        return $this->getAttributes();
     }
 
     /**
