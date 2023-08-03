@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DevCoder;
 
+use DevCoder\Exception\MethodNotAllowed;
 use DevCoder\Exception\RouteNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -13,6 +14,7 @@ interface RouterInterface
      * @param ServerRequestInterface $serverRequest
      * @return Route
      * @throws RouteNotFound if no found route.
+     * @throws MethodNotAllowed if method not allowed.
      */
     public function match(ServerRequestInterface $serverRequest): Route;
 
@@ -21,6 +23,7 @@ interface RouterInterface
      * @param string $method
      * @return Route
      * @throws RouteNotFound if no found route.
+     * @throws MethodNotAllowed if method not allowed.
      */
     public function matchFromPath(string $path, string $method): Route;
 

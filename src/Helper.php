@@ -2,7 +2,7 @@
 
 namespace DevCoder;
 
-class Helper
+final class Helper
 {
     public static function trimPath(string $path): string
     {
