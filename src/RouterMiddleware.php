@@ -28,6 +28,14 @@ final class RouterMiddleware implements MiddlewareInterface
         $this->responseFactory = $responseFactory;
     }
 
+
+    /**
+     * Process the request and return a response.
+     *
+     * @param ServerRequestInterface  $request description of request parameter
+     * @param RequestHandlerInterface $handler description of handler parameter
+     * @return ResponseInterface
+     */
     public function process(
         ServerRequestInterface  $request,
         RequestHandlerInterface $handler

@@ -17,12 +17,27 @@ final class UrlGenerator
     private ArrayAccess $routes;
     private string $defaultUri;
 
+    /**
+     * Constructor for the UrlGenerator class.
+     *
+     * @param ArrayAccess $routes The routes object.
+     * @param string $defaultUri The default URI.
+     */
     public function __construct(ArrayAccess $routes, string $defaultUri = '')
     {
         $this->routes = $routes;
         $this->defaultUri = $defaultUri;
     }
 
+    /**
+     * Generates a URL based on the given route name and parameters.
+     *
+     * @param string $name The name of the route.
+     * @param array $parameters The parameters for the route. Default is an empty array.
+     * @param bool $absoluteUrl Whether to generate an absolute URL. Default is false.
+     * @return string The generated URL.
+     * @throws InvalidArgumentException If the route name is unknown or if the route requires parameters but none are provided.
+     */
     public function generate(string $name, array $parameters = [], bool $absoluteUrl = false): string
     {
         if ($this->routes->offsetExists($name) === false) {
