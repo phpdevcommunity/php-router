@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DevCoder;
+namespace PhpDevCommunity;
 
-use DevCoder\Traits\RouteTrait;
+use PhpDevCommunity\Traits\RouteTrait;
 use InvalidArgumentException;
 use function array_filter;
 use function is_string;
@@ -14,10 +14,6 @@ use function reset;
 use function str_replace;
 use function trim;
 
-/**
- * Class Route
- * @package DevCoder
- */
 final class Route
 {
     use RouteTrait;

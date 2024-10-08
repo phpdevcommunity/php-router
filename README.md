@@ -1,8 +1,4 @@
-# PHP Router : A versatile and efficient PHP routing solution designed to streamline route management within PHP applications.
-
-[![Latest Stable Version](http://poser.pugx.org/devcoder-xyz/php-router/v)](https://packagist.org/packages/devcoder-xyz/php-router) [![Total Downloads](http://poser.pugx.org/devcoder-xyz/php-router/downloads)](https://packagist.org/packages/devcoder-xyz/php-router) [![Latest Unstable Version](http://poser.pugx.org/devcoder-xyz/php-router/v/unstable)](https://packagist.org/packages/devcoder-xyz/php-router) [![License](http://poser.pugx.org/devcoder-xyz/php-router/license)](https://packagist.org/packages/devcoder-xyz/php-router) [![PHP Version Require](http://poser.pugx.org/devcoder-xyz/php-router/require/php)](https://packagist.org/packages/devcoder-xyz/php-router)
-
-## Description
+# PHP Router 
 
 PHP Router is a simple and efficient routing library designed for PHP applications. It provides a straightforward way to define routes, handle HTTP requests, and generate URLs. Built with PSR-7 message implementation in mind, it seamlessly integrates with PHP applications.
 
@@ -13,7 +9,7 @@ You can install PHP Router via Composer. Just run:
 
 ### Composer Require
 ```
-composer require devcoder-xyz/php-router
+composer require phpdevcommunity/php-router
 ```
 
 ## Requirements
@@ -81,13 +77,13 @@ class ArticleController {
 ```php
 // Define your routes
 $routes = [
-    new \DevCoder\Route('home_page', '/', [IndexController::class]),
-    new \DevCoder\Route('api_articles_collection', '/api/articles', [ArticleController::class, 'getAll']),
-    new \DevCoder\Route('api_articles', '/api/articles/{id}', [ArticleController::class, 'get']),
+    new \PhpDevCommunity\Route('home_page', '/', [IndexController::class]),
+    new \PhpDevCommunity\Route('api_articles_collection', '/api/articles', [ArticleController::class, 'getAll']),
+    new \PhpDevCommunity\Route('api_articles', '/api/articles/{id}', [ArticleController::class, 'get']),
 ];
 
 // Initialize the router
-$router = new \DevCoder\Router($routes, 'http://localhost');
+$router = new \PhpDevCommunity\Router($routes, 'http://localhost');
 
 try {
     // Match incoming request
@@ -106,10 +102,10 @@ try {
     }
     echo $controller(...array_values($attributes));
 
-} catch (\DevCoder\Exception\MethodNotAllowed $exception) {
+} catch (\PhpDevCommunity\Exception\MethodNotAllowed $exception) {
     header("HTTP/1.0 405 Method Not Allowed");
     exit();
-} catch (\DevCoder\Exception\RouteNotFound $exception) {
+} catch (\PhpDevCommunity\Exception\RouteNotFound $exception) {
     header("HTTP/1.0 404 Not Found");
     exit();
 }
@@ -127,8 +123,8 @@ try {
 Routes can be defined using the `Route` class provided by PHP Router. You can specify HTTP methods, attribute constraints, and handler methods for each route.
 
 ```php
-$route = new \DevCoder\Route('api_articles_post', '/api/articles', [ArticleController::class, 'post'], ['POST']);
-$route = new \DevCoder\Route('api_articles_put', '/api/articles/{id}', [ArticleController::class, 'put'], ['PUT']);
+$route = new \PhpDevCommunity\Route('api_articles_post', '/api/articles', [ArticleController::class, 'post'], ['POST']);
+$route = new \PhpDevCommunity\Route('api_articles_put', '/api/articles/{id}', [ArticleController::class, 'put'], ['PUT']);
 ```
 ### Easier Route Definition with Static Methods
 
@@ -364,5 +360,10 @@ echo $router->generateUri('home_page'); // /
 echo $router->generateUri('api_articles', ['id' => 1]); // /api/articles/1
 echo $router->generateUri('api_articles', ['id' => 1], true); // http://localhost/api/articles/1
 ```
+## Contributing
 
-Ideal for small to medium-sized projects, PHP Router offers simplicity and efficiency in handling routing tasks for PHP applications.
+Contributions are welcome! Feel free to open issues or submit pull requests to help improve the library.
+
+## License
+
+This library is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).

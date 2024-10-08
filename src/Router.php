@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DevCoder;
+namespace PhpDevCommunity;
 
-use DevCoder\Exception\MethodNotAllowed;
-use DevCoder\Exception\RouteNotFound;
+use PhpDevCommunity\Exception\MethodNotAllowed;
+use PhpDevCommunity\Exception\RouteNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class Router implements RouterInterface

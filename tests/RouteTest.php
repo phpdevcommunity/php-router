@@ -1,11 +1,29 @@
 <?php
 
-namespace Test\DevCoder;
+namespace Test\PhpDevCommunity;
 
-use PHPUnit\Framework\TestCase;
-use DevCoder\Route;
+use PhpDevCommunity\Route;
+use PhpDevCommunity\UniTester\TestCase;
 
 class RouteTest extends TestCase {
+
+    protected function setUp(): void
+    {
+        // TODO: Implement setUp() method.
+    }
+
+    protected function tearDown(): void
+    {
+        // TODO: Implement tearDown() method.
+    }
+
+    protected function execute(): void
+    {
+        $this->testMatchRoute();
+        $this->testNotMatchRoute();
+        $this->testException();
+        $this->testWheres();
+    }
 
     public function testNotMatchRoute()
     {
@@ -29,8 +47,9 @@ class RouteTest extends TestCase {
 
     public function testException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        new Route('view_articles','/view', ['App\\Controller\\HomeController', 'home'], []);
+        $this->expectException(\InvalidArgumentException::class, function () {
+            new Route('view_articles','/view', ['App\\Controller\\HomeController', 'home'], []);
+        });
     }
 
     public function testWheres()
@@ -57,4 +76,5 @@ class RouteTest extends TestCase {
         $this->assertFalse($routes[4]->match('/invoice/F0004'));
         $this->assertTrue($routes[4]->match('/invoice/FROUIAUI'));
     }
+
 }

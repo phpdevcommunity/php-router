@@ -1,8 +1,8 @@
 <?php
 
-namespace DevCoder\Traits;
+namespace PhpDevCommunity\Traits;
 
-use DevCoder\Route as BaseRoute;
+use PhpDevCommunity\Route as BaseRoute;
 
 trait RouteTrait
 {

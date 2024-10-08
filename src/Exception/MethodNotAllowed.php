@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DevCoder\Exception;
+namespace PhpDevCommunity\Exception;
 
 final class MethodNotAllowed extends \Exception
 {

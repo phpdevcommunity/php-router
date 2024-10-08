@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DevCoder;
+namespace PhpDevCommunity;
 
 use ArrayAccess;
 use InvalidArgumentException;

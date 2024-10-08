@@ -1,6 +1,6 @@
 <?php
 
-namespace DevCoder;
+namespace PhpDevCommunity;
 
 final class Helper
 {
